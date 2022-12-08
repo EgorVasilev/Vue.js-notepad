@@ -8,7 +8,7 @@
 				<button @click="orderByDateIncrease"><i class="fa fa-arrow-up"></i></button>
 			</div>
 			<div class="search-panel">
-				<input v-model="searchInput" type="text" placeholder="search note"></input>
+				<input v-model="searchInput" type="text" placeholder="search note">
 				<span><i class="fa fa-search"></i></span>
 			</div>
 		</div>
@@ -17,7 +17,7 @@
 			<h3 slot="header">Add new note</h3>
 			<form v-on:submit.prevent="$emit('addNewNote', newNote)" slot="body" id="add-new-note-form">
 				<p>Note Title</p>
-				<input v-model="newNote.title" type="text"  placeholder="Title" required></input>
+				<input v-model="newNote.title" type="text"  placeholder="Title" required>
 				<p>Note Text</p>
 				<textarea v-model="newNote.text" placeholder="Your note..." required></textarea>
 			</form>

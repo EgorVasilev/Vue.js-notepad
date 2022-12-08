@@ -1,12 +1,10 @@
-import Vue from 'vue'
-import VueFire from 'vuefire'
+import {createApp} from 'vue'
 import App from './App.vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
-Vue.use(Vuex)
-Vue.use(VueFire)
+const app = createApp(App)
 
-const store = new Vuex.Store({
+const store = createStore({
 	state: {
 		notesOrderByDate : 'decrease',
 		showAddNewNoteModal : false,
@@ -33,9 +31,5 @@ const store = new Vuex.Store({
   	}
 })
 
-new Vue({
-	el: '#app',
-	store,
-	template: '<App/>',
-	components: { App }
-})
+app.use(store)
+app.mount('#app')

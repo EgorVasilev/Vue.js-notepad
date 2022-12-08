@@ -18,7 +18,7 @@
 			<h3 slot="header">Edit note</h3>
 			<form v-on:submit.prevent="$emit('editNotePush', editNoteValues)" slot="body" id="edit-note-form">
 				<p>Note Title</p>
-				<input v-model="editNote.title"  type="text"  placeholder="Title" required></input>
+				<input v-model="editNote.title"  type="text"  placeholder="Title" required>
 				<p>Note Text</p>
 				<textarea v-model="editNote.text"  placeholder="Your note..." required></textarea>
 			</form>

@@ -7,24 +7,30 @@
 </template>
 
 <script>
-	import db from './DataBase.js';
-	import NotesList from './NotesList.vue';
+	import {firebaseDB} from './DataBase.js';
+  import { ref, onValue } from 'firebase/database'
+
+
+  import NotesList from './NotesList.vue';
 	import ControlPanel from './ControlPanel.vue';
 	
 	//make query to firebase and get Notes node
-	var notesRef = db.ref('notes');
+  const notesRef = ref(firebaseDB, 'notes')
 
-	export default {
+  let notes = [];
+
+  onValue(notesRef, snap => {
+    notes = Object.values(snap.exportVal());
+  })
+
+  export default {
 		name: 'app',
 		components: { NotesList, ControlPanel },
 		data : function() {
 			return {
-				editNoteLink : null
-				
+				editNoteLink: null,
+        notes
 			}
-		},
-		firebase: {
-			notes: notesRef
 		},
 		methods : {
 			addNewNote : function(newNote) {
