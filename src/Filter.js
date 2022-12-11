@@ -1,13 +1,13 @@
 function filterBy(list, value) {
-  return list.filter(function(item) {
+  return list.filter(function (item) {
     return item.indexOf(value) > -1;
   });
 }
 
 function findBy(list, value) {
-  return list.filter(function(item) {
-    return item == value
+  return list.filter(function (item) {
+    return item == value;
   });
 }
 
-export {filterBy, findBy}
+export {filterBy, findBy};
