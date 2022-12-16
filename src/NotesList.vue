@@ -1,7 +1,7 @@
 <template>
   <div class="note-list">
     <ul>
-      <li v-for="note in orderNotesByNews">
+      <li v-for="note in orderNotesByNews" :key="note.key">
         <div class="note">
           <div class="note-header" @click="readNote(note)">
             <span class="note-title">{{ note.title }}</span>
@@ -20,48 +20,64 @@
     </ul>
 
     <EditNoteModal v-if="showEditNoteModal" @close="cancelEditNote">
-      <h3 slot="header">Edit note</h3>
-      <form
-        id="edit-note-form"
-        slot="body"
-        @submit.prevent="$emit('editNotePush', editNoteValues)">
-        <p>Note Title</p>
-        <input
-          v-model="editNote.title"
-          type="text"
-          placeholder="Title"
-          required />
-        <p>Note Text</p>
-        <textarea
-          v-model="editNote.text"
-          placeholder="Your note..."
-          required></textarea>
-      </form>
-      <div slot="footer">
+      <template #header>
+        <h3>Edit note</h3>
+      </template>
+
+      <template #body>
+        <form
+          id="edit-note-form"
+          @submit.prevent="$emit('editNotePush', editNoteValues)">
+          <p>Note Title</p>
+          <input
+            v-model="editNote.title"
+            type="text"
+            placeholder="Title"
+            required />
+          <p>Note Text</p>
+          <textarea
+            v-model="editNote.text"
+            placeholder="Your note..."
+            required></textarea>
+        </form>
+      </template>
+
+      <template #footer>
         <button form="edit-note-form">Edit Note</button>
-      </div>
+      </template>
     </EditNoteModal>
 
     <ReadNoteModal v-if="showReadNoteModal" @close="showReadNoteModal = false">
-      <h3 slot="header">{{ readNoteValues.title }}</h3>
-      <p slot="body">{{ readNoteValues.text }}</p>
+      <template #header>
+        <h3>{{ readNoteValues.title }}</h3>
+      </template>
+
+      <template #body>
+        <p>{{ readNoteValues.text }}</p>
+      </template>
     </ReadNoteModal>
 
     <RemoveNoteModal
       v-if="showRemoveNoteModal"
       @close="showRemoveNoteModal = false">
-      <h3 slot="header">Remove this note?</h3>
-      <p slot="body">{{ confirmRemoveNoteLink.title }}</p>
-      <div slot="footer">
+      <template #header>
+        <h3>Remove this note?</h3>
+      </template>
+
+      <template #body>
+        <p>{{ confirmRemoveNoteLink.title }}</p>
+      </template>
+
+      <template #footer>
         <button
           @click="
-            $emit('removeNote', confirmRemoveNoteLink);
+            $emit('removeNote', confirmRemoveNoteLink.key);
             showRemoveNoteModal = false;
           ">
           Yes
         </button>
         <button @click="showRemoveNoteModal = false">No</button>
-      </div>
+      </template>
     </RemoveNoteModal>
   </div>
 </template>

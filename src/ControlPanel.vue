@@ -20,26 +20,29 @@
     </div>
 
     <AddNewNoteModal v-if="showAddNewNoteModal" @close="closeAddNewNoteModal">
-      <h3 slot="header">Add new note</h3>
-      <form
-        id="add-new-note-form"
-        slot="body"
-        @submit.prevent="$emit('addNewNote', newNote)">
-        <p>Note Title</p>
-        <input
-          v-model="newNote.title"
-          type="text"
-          placeholder="Title"
-          required />
-        <p>Note Text</p>
-        <textarea
-          v-model="newNote.text"
-          placeholder="Your note..."
-          required></textarea>
-      </form>
-      <div slot="footer">
-        <button form="add-new-note-form">Add Note</button>
-      </div>
+      <template #header><h3>Add new note</h3></template>
+
+      <template #body>
+        <form
+          id="add-new-note-form"
+          @submit.prevent="$emit('addNewNote', newNote)">
+          <p>Note Title</p>
+          <input
+            v-model="newNote.title"
+            type="text"
+            placeholder="Title"
+            required />
+          <p>Note Text</p>
+          <textarea
+            v-model="newNote.text"
+            placeholder="Your note..."
+            required></textarea>
+        </form>
+      </template>
+
+      <template #footer
+        ><button form="add-new-note-form">Add Note</button>
+      </template>
     </AddNewNoteModal>
   </div>
 </template>

@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import {onValue} from 'firebase/database';
-
 import NotesList from './NotesList.vue';
 import ControlPanel from './ControlPanel.vue';
 import {NotesService} from './services/notesService';
@@ -28,30 +26,30 @@ export default {
     };
   },
   created() {
-    onValue(NotesService.getAll(), snapshot => {
-      this.notes = Object.values(snapshot.val());
-    });
+    NotesService.subscribe(
+      notes =>
+        (this.notes = Object.entries(notes).map(([key, value]) => ({
+          ...value,
+          key,
+        }))),
+    );
   },
   methods: {
     addNewNote: function (newNote) {
-      newNote.date = new Date().toLocaleString();
-      notesRef.push(newNote);
-      newNote.title = '1';
-      newNote.text = '';
-      newNote.date = '';
+      NotesService.create({...newNote, date: new Date().toLocaleString()});
+
       this.$store.commit('closeAddNewNoteModal');
     },
-    removeNote: function (note) {
-      notesRef.child(note['.key']).remove();
+    removeNote: function (key) {
+      NotesService.deleteOne(key);
     },
     editNoteSetLink: function (note) {
       this.editNoteLink = note;
     },
-    editNotePush: function (editNoteValues) {
-      var editNoteRef = db.ref('notes/' + this.editNoteLink['.key']);
-      editNoteRef.set({
-        title: editNoteValues.title,
-        text: editNoteValues.text,
+    editNotePush: function ({title, text}) {
+      NotesService.set(this.editNoteLink.key, {
+        title,
+        text,
         date: new Date().toLocaleString(),
       });
     },
