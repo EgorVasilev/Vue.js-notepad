@@ -52,6 +52,7 @@ import AddNewNoteModal from './AddNewNoteModal.vue';
 
 export default {
   components: {AddNewNoteModal},
+  emits: ['addNewNote'],
   data: function () {
     return {
       newNote: {title: '', text: '', date: ''},

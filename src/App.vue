@@ -1,25 +1,26 @@
 <template>
   <div id="app">
-    <img id="logo-image" src="./assets/logo.png" />
-    <ControlPanel @addNewNote="addNewNote"></ControlPanel>
+    <img id="logo-image" alt="Vue logo" src="./assets/logo.png" />
+    <ControlPanel @add-new-note="addNewNote"></ControlPanel>
     <NotesList
       :notes="notes"
       :edit-note-link="editNoteLink"
-      @removeNote="removeNote"
-      @editNoteSetLink="editNoteSetLink"
-      @editNotePush="editNotePush"></NotesList>
+      @remove-note="removeNote"
+      @edit-note-set-link="editNoteSetLink"
+      @edit-note-push="editNotePush"></NotesList>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import {defineComponent} from 'vue';
 import NotesList from './NotesList.vue';
 import ControlPanel from './ControlPanel.vue';
 import {NotesService} from './services/notesService';
 
-export default {
+export default defineComponent({
   name: 'App',
   components: {NotesList, ControlPanel},
-  data: function () {
+  data: function (): {editNoteLink: any; notes: any} {
     return {
       editNoteLink: null,
       notes: [],
@@ -35,18 +36,18 @@ export default {
     );
   },
   methods: {
-    addNewNote: function (newNote) {
+    addNewNote: function (newNote: any) {
       NotesService.create({...newNote, date: new Date().toLocaleString()});
 
       this.$store.commit('closeAddNewNoteModal');
     },
-    removeNote: function (key) {
+    removeNote: function (key: any) {
       NotesService.deleteOne(key);
     },
-    editNoteSetLink: function (note) {
+    editNoteSetLink: function (note: any) {
       this.editNoteLink = note;
     },
-    editNotePush: function ({title, text}) {
+    editNotePush: function ({title, text}: any) {
       NotesService.set(this.editNoteLink.key, {
         title,
         text,
@@ -54,7 +55,7 @@ export default {
       });
     },
   },
-};
+});
 </script>
 
 <style lang="sass">

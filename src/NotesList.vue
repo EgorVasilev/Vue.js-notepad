@@ -82,21 +82,39 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import {defineComponent} from 'vue';
+import type {PropType} from 'vue';
+
 import EditNoteModal from './EditNoteModal.vue';
 import ReadNoteModal from './ReadNoteModal.vue';
 import RemoveNoteModal from './RemoveNoteModal.vue';
 
-export default {
+type Note = {title: string; text: string; date: string}; // TODO move type declaration to storage section
+
+type ComponentData = {
+  showEditNoteModal: boolean;
+  showReadNoteModal: boolean;
+  showRemoveNoteModal: boolean;
+  editNoteValues: Note;
+  currentReadNote: null | Note;
+  confirmRemoveNoteLink: null | Note;
+};
+
+export default defineComponent({
   components: {EditNoteModal, ReadNoteModal, RemoveNoteModal},
-  props: ['notes', 'editNoteLink'],
-  data: function () {
+  props: {
+    notes: {type: Array as PropType<Note[]>, required: true},
+    editNoteLink: {type: Object as PropType<Note>, required: true},
+  },
+  emits: ['editNoteSetLink', 'editNotePush', 'removeNote'],
+  data: function (): ComponentData {
     return {
       showEditNoteModal: false,
       showReadNoteModal: false,
       showRemoveNoteModal: false,
       editNoteValues: {title: '', text: '', date: ''},
-      currentReadNote: '',
+      currentReadNote: null,
       confirmRemoveNoteLink: null,
     };
   },
@@ -105,14 +123,11 @@ export default {
       return this.$store.state.searchInputValue;
     },
     filteredNotes: function () {
-      var self = this;
-      return this.notes.filter(function (note) {
-        return (
-          note.title.toLowerCase().indexOf(self.searchValue.toLowerCase()) >= 0
-        );
-      });
+      return this.notes.filter(note =>
+        note.title.toLowerCase().includes(this.searchValue),
+      );
     },
-    readNoteValues: function (note) {
+    readNoteValues: function () {
       return this.currentReadNote;
     },
     editNote: function () {
@@ -128,50 +143,59 @@ export default {
       return this.$store.state.notesOrderByDate;
     },
     orderNotesByNews: function () {
+      const sortedNotes = [...this.filteredNotes];
+
       if (this.orderState == 'decrease') {
-        var arr = this.filteredNotes.sort(function (a, b) {
-          if (a.date > b.date) {
+        sortedNotes.sort(function (a, b) {
+          const aDate = new Date(a.date);
+          const bDate = new Date(b.date);
+
+          if (aDate > bDate) {
             return -1;
           }
-          if (a.date < b.date) {
+          if (aDate < bDate) {
             return 1;
           }
-          // if a == b
+
           return 0;
         });
-        return arr;
       }
+
       if (this.orderState == 'increase') {
-        var arr = this.filteredNotes.sort(function (a, b) {
-          if (a.date > b.date) {
+        sortedNotes.sort(function (a, b) {
+          const aDate = new Date(a.date);
+          const bDate = new Date(b.date);
+
+          if (aDate > bDate) {
             return 1;
           }
-          if (a.date < b.date) {
+          if (aDate < bDate) {
             return -1;
           }
-          // if a == b
+
           return 0;
         });
-        return arr;
       }
+
+      return sortedNotes;
     },
   },
   methods: {
-    readNote: function (note) {
+    readNote: function (note: Note) {
       this.showReadNoteModal = true;
       this.currentReadNote = note;
     },
-    confirmRemoveNote: function (note) {
+    confirmRemoveNote: function (note: Note) {
       this.showRemoveNoteModal = true;
       this.confirmRemoveNoteLink = note;
     },
     cancelEditNote: function () {
-      this.editNoteValues.title = this.editNoteLink.title;
-      this.editNoteValues.text = this.editNoteLink.text;
+      this.editNoteValues.title = this.editNoteLink?.title || '';
+      this.editNoteValues.text = this.editNoteLink?.text || '';
       this.showEditNoteModal = false;
     },
   },
-};
+});
 </script>
 
 <style lang="sass">
