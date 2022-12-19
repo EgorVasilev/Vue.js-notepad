@@ -1,11 +1,11 @@
 <template>
   <div class="note-list">
     <ul>
-      <li v-for="note in orderNotesByNews" :key="note.key">
+      <li v-for="note in notesSortedByDate" :key="note.key">
         <div class="note">
           <div class="note-header" @click="readNote(note)">
             <span class="note-title">{{ note.title }}</span>
-            <span class="note-date">{{ note.date }}</span>
+            <span class="note-date">{{ formatDate(note.date) }}</span>
           </div>
           <span
             class="edit-note-button"
@@ -89,6 +89,7 @@ import type {PropType} from 'vue';
 import EditNoteModal from './EditNoteModal.vue';
 import ReadNoteModal from './ReadNoteModal.vue';
 import RemoveNoteModal from './RemoveNoteModal.vue';
+import IntlService from './services/internationalization/intlService';
 
 type Note = {title: string; text: string; date: string}; // TODO move type declaration to storage section
 
@@ -108,6 +109,19 @@ export default defineComponent({
     editNoteLink: {type: Object as PropType<Note>, required: true},
   },
   emits: ['editNoteSetLink', 'editNotePush', 'removeNote'],
+  setup() {
+    const dateFormatter = IntlService.dateFormatter('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+    });
+
+    return {dateFormatter};
+  },
   data: function (): ComponentData {
     return {
       showEditNoteModal: false,
@@ -139,13 +153,10 @@ export default defineComponent({
         return this.editNoteValues;
       }
     },
-    orderState: function () {
-      return this.$store.state.notesOrderByDate;
-    },
-    orderNotesByNews: function () {
+    notesSortedByDate: function () {
       const sortedNotes = [...this.filteredNotes];
 
-      if (this.orderState == 'decrease') {
+      if (this.$store.state.notesOrderByDate == 'decrease') {
         sortedNotes.sort(function (a, b) {
           const aDate = new Date(a.date);
           const bDate = new Date(b.date);
@@ -161,7 +172,7 @@ export default defineComponent({
         });
       }
 
-      if (this.orderState == 'increase') {
+      if (this.$store.state.notesOrderByDate == 'increase') {
         sortedNotes.sort(function (a, b) {
           const aDate = new Date(a.date);
           const bDate = new Date(b.date);
@@ -193,6 +204,9 @@ export default defineComponent({
       this.editNoteValues.title = this.editNoteLink?.title || '';
       this.editNoteValues.text = this.editNoteLink?.text || '';
       this.showEditNoteModal = false;
+    },
+    formatDate: function (date: string) {
+      return this.dateFormatter.format(new Date(date));
     },
   },
 });

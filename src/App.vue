@@ -37,7 +37,7 @@ export default defineComponent({
   },
   methods: {
     addNewNote: function (newNote: any) {
-      NotesService.create({...newNote, date: new Date().toLocaleString()});
+      NotesService.create({...newNote, date: new Date().toISOString()});
 
       this.$store.commit('closeAddNewNoteModal');
     },
@@ -51,7 +51,7 @@ export default defineComponent({
       NotesService.set(this.editNoteLink.key, {
         title,
         text,
-        date: new Date().toLocaleString(),
+        date: new Date().toISOString(),
       });
     },
   },
