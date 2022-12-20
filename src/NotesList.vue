@@ -110,7 +110,7 @@ export default defineComponent({
   },
   emits: ['editNoteSetLink', 'editNotePush', 'removeNote'],
   setup() {
-    const dateFormatter = IntlService.dateFormatter('en-US', {
+    const dateFormatter = IntlService.defaultLocaleDateFormatter({
       year: 'numeric',
       month: 'numeric',
       day: 'numeric',

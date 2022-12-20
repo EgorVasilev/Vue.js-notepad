@@ -1,15 +1,24 @@
+interface DateFormatter {
+  format: (date: Date) => string;
+}
+
 export function createIntlService() {
   const dateFormatter = (
     locales?: string | string[],
     options?: Intl.DateTimeFormatOptions,
-  ): {format: (date: Date) => string} => {
+  ): DateFormatter => {
     const formatter = Intl.DateTimeFormat(locales, options);
 
     return {format: date => formatter.format(date)};
   };
 
+  const defaultLocaleDateFormatter = (
+    options?: Intl.DateTimeFormatOptions,
+  ): DateFormatter => dateFormatter(undefined, options); // Intl interprets undefined as flag to use a locale from browser config
+
   return Object.freeze({
     dateFormatter,
+    defaultLocaleDateFormatter,
   });
 }
 
