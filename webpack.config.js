@@ -57,11 +57,11 @@ module.exports = {
     ],
   },
   resolve: {
-    roots: ['./'],
     alias: {
+      components: path.resolve(__dirname, 'src/components/'),
       vue: '@vue/compat',
     },
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: ['.ts', '.tsx', '.js', '.json', '.vue'],
   },
   devServer: {
     static: path.join(__dirname, '.'),

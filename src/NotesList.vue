@@ -27,7 +27,7 @@
       <template #body>
         <form
           id="edit-note-form"
-          @submit.prevent="$emit('editNotePush', editNoteValues)">
+          @submit.prevent="$emit('editNote', editNoteValues)">
           <p>Note Title</p>
           <input
             v-model="editNote.title"
@@ -86,12 +86,13 @@
 import {defineComponent} from 'vue';
 import type {PropType} from 'vue';
 
-import EditNoteModal from './EditNoteModal.vue';
-import ReadNoteModal from './ReadNoteModal.vue';
-import RemoveNoteModal from './RemoveNoteModal.vue';
+import EditNoteModal from 'components/modal/editNote/editNoteModal.vue';
+import ReadNoteModal from 'components/modal/readNote/readNoteModal.vue';
+import RemoveNoteModal from 'components/modal/removeNote/removeNoteModal.vue';
 import IntlService from './services/internationalization/intlService';
-
-type Note = {title: string; text: string; date: string}; // TODO move type declaration to storage section
+import PopupController from 'components/popupController/popupController.vue';
+import Popup from 'components/modal/modal.vue';
+import {Note} from 'types/note';
 
 type ComponentData = {
   showEditNoteModal: boolean;
@@ -103,12 +104,18 @@ type ComponentData = {
 };
 
 export default defineComponent({
-  components: {EditNoteModal, ReadNoteModal, RemoveNoteModal},
+  components: {
+    EditNoteModal,
+    ReadNoteModal,
+    RemoveNoteModal,
+    PopupController,
+    Popup,
+  },
   props: {
     notes: {type: Array as PropType<Note[]>, required: true},
     editNoteLink: {type: Object as PropType<Note>, required: true},
   },
-  emits: ['editNoteSetLink', 'editNotePush', 'removeNote'],
+  emits: ['editNoteSetLink', 'editNote', 'removeNote'],
   setup() {
     const dateFormatter = IntlService.defaultLocaleDateFormatter({
       year: 'numeric',
@@ -127,7 +134,7 @@ export default defineComponent({
       showEditNoteModal: false,
       showReadNoteModal: false,
       showRemoveNoteModal: false,
-      editNoteValues: {title: '', text: '', date: ''},
+      editNoteValues: {title: '', text: '', date: '', key: ''},
       currentReadNote: null,
       confirmRemoveNoteLink: null,
     };

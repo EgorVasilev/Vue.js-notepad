@@ -1,13 +1,22 @@
-import {createApp} from 'vue';
+import {createApp, InjectionKey} from 'vue';
 import App from './App.vue';
-import {createStore} from 'vuex';
+import {createStore, Store} from 'vuex';
 
 const app = createApp(App);
 
-const store = createStore({
+type State = {
+  notesOrderByDate: 'decrease' | 'increase';
+  isAddNewNoteModalActive: boolean;
+  showEditNoteModal: boolean;
+  searchInputValue: string;
+};
+
+export const storeKey: InjectionKey<Store<State>> = Symbol();
+
+const store = createStore<State>({
   state: {
     notesOrderByDate: 'decrease',
-    showAddNewNoteModal: false,
+    isAddNewNoteModalActive: false,
     showEditNoteModal: false,
     searchInputValue: '',
   },
@@ -19,10 +28,10 @@ const store = createStore({
       state.notesOrderByDate = 'increase';
     },
     closeAddNewNoteModal(state) {
-      state.showAddNewNoteModal = false;
+      state.isAddNewNoteModalActive = false;
     },
     openAddNewNoteModal(state) {
-      state.showAddNewNoteModal = true;
+      state.isAddNewNoteModalActive = true;
     },
     setSearchInputValue(state, payload) {
       state.searchInputValue = payload;
@@ -30,5 +39,5 @@ const store = createStore({
   },
 });
 
-app.use(store);
+app.use(store, storeKey);
 app.mount('#app');

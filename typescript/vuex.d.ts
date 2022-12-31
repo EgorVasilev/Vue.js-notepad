@@ -4,7 +4,7 @@ declare module '@vue/runtime-core' {
   // declare your own store states
   interface State {
     notesOrderByDate: 'decrease' | 'increase';
-    showAddNewNoteModal: boolean;
+    isAddNewNoteModalActive: boolean;
     showEditNoteModal: boolean;
     searchInputValue: string;
   }

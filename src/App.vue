@@ -1,14 +1,15 @@
 <template>
   <div id="app">
     <img id="logo-image" alt="Vue logo" src="./assets/logo.png" />
-    <ControlPanel @add-new-note="addNewNote"></ControlPanel>
+    <ControlPanel @add-new-note="addNewNote" />
     <NotesList
-      :notes="notes"
+      :notes="notesList"
       :edit-note-link="editNoteLink"
       @remove-note="removeNote"
       @edit-note-set-link="editNoteSetLink"
-      @edit-note-push="editNotePush"></NotesList>
+      @edit-note-push="editNote" />
   </div>
+  <AddNoteModal />
 </template>
 
 <script lang="ts">
@@ -16,24 +17,35 @@ import {defineComponent} from 'vue';
 import NotesList from './NotesList.vue';
 import ControlPanel from './ControlPanel.vue';
 import {NotesService} from './services/notesService';
+import AddNoteModal from 'components/modal/addNote/addNewNoteModal.vue';
+import {Note} from 'types/note';
 
 export default defineComponent({
   name: 'App',
-  components: {NotesList, ControlPanel},
-  data: function (): {editNoteLink: any; notes: any} {
+  components: {NotesList, ControlPanel, AddNoteModal},
+  data: function (): {
+    editNoteLink: Note | null;
+    notes: Record<string, Omit<Note, 'key'>>;
+    currentPopup: '' | 'editNote' | 'newNote' | 'readNote' | 'removeNote';
+  } {
     return {
       editNoteLink: null,
-      notes: [],
+      notes: {},
+      currentPopup: '',
     };
   },
+  computed: {
+    notesList: function () {
+      return Object.entries(this.notes).map(([key, value]) => ({
+        ...value,
+        key,
+      }));
+    },
+  },
   created() {
-    NotesService.subscribe(
-      notes =>
-        (this.notes = Object.entries(notes).map(([key, value]) => ({
-          ...value,
-          key,
-        }))),
-    );
+    NotesService.subscribe(notes => {
+      this.notes = notes;
+    });
   },
   methods: {
     addNewNote: function (newNote: any) {
@@ -47,7 +59,11 @@ export default defineComponent({
     editNoteSetLink: function (note: any) {
       this.editNoteLink = note;
     },
-    editNotePush: function ({title, text}: any) {
+    editNote: function ({title, text}: any) {
+      if (!this.editNoteLink) {
+        return;
+      }
+
       NotesService.set(this.editNoteLink.key, {
         title,
         text,
