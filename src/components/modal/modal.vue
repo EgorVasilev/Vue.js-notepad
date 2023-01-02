@@ -1,5 +1,5 @@
 <template>
-  <template v-if="props.isOpen">
+  <template v-if="isOpen">
     <transition name="modal">
       <div class="modal-mask">
         <div class="modal-wrapper">
@@ -36,9 +36,7 @@ export default defineComponent({
 <script lang="ts" setup>
 import {defineProps, defineEmits} from 'vue';
 
-const props = defineProps({isOpen: Boolean});
-
-// console.log('props', props.isOpen);
+defineProps<{isOpen: boolean}>();
 
 defineEmits(['close']);
 </script>
@@ -63,7 +61,7 @@ p
 
 .modal-container
   width: 300px
-  margin: 0px auto
+  margin: 0 auto
   padding: 20px 30px
   background-color: #fff
   border-radius: 2px
@@ -93,7 +91,6 @@ p
 
 .modal-enter .modal-container,
 .modal-leave-active .modal-container
-  -webkit-transform: scale(1.1)
   transform: scale(1.1)
 @media screen and (max-width: 600px)
   .modal-container
